@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:weatherapp/presentation/screens/home/home.dart';
+import 'package:weatherapp/core/routings/routes.dart';
+import 'injectors/injector.dart' as di;
 
-void main() {
+void main() async {
+  await di.initDepInject();
   runApp(const MyApp());
 }
 
@@ -12,10 +14,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: true,
         title: 'Flutter Demo',
         theme: ThemeData(
+          useMaterial3: true,
           primarySwatch: Colors.blue,
         ),
-        home: const HomeScreen());
+        initialRoute: Routes.home,
+        onGenerateRoute: Routes.onGenerateRoute,);
   }
 }
