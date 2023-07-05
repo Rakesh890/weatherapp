@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 
-class WeaterModelEntity extends Equatable {
+class WeatherModelEntity extends Equatable {
   final CoordEntity? coord;
   final List<WeatherEntity>? weather;
   final String? base;
@@ -16,7 +16,7 @@ class WeaterModelEntity extends Equatable {
   final String? name;
   final int? cod;
 
-  const WeaterModelEntity({
+  const WeatherModelEntity({
     this.coord,
     this.weather,
     this.base,

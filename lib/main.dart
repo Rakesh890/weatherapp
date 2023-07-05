@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:weatherapp/core/routings/routes.dart';
+import 'package:weatherapp/utils/colors.dart';
 import 'injectors/injector.dart' as di;
 
 void main() async {
-  await di.initDepInject();
+  di.initDepInject();
   runApp(const MyApp());
 }
 
@@ -15,12 +16,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: true,
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          useMaterial3: true,
-          primarySwatch: Colors.blue,
-        ),
-        initialRoute: Routes.home,
-        onGenerateRoute: Routes.onGenerateRoute,);
+      title: 'Flutter Demo',
+      theme: ThemeData(
+          useMaterial3: true, scaffoldBackgroundColor: AppColors.solid2Color),
+      initialRoute: Routes.landing,
+      onGenerateRoute: Routes.onGenerateRoute,
+    );
   }
 }
