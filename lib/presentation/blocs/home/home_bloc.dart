@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
-import 'package:weatherapp/core/app_exceptions.dart';
+import 'package:weatherapp/core/error/app_exceptions.dart';
 import 'package:weatherapp/domain/entites/weather_entity.dart';
 import 'package:weatherapp/domain/usecase/weather_usecase.dart';
 import 'package:weatherapp/injectors/injector.dart';

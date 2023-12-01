@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
           useMaterial3: true, scaffoldBackgroundColor: AppColors.solid2Color),
-      initialRoute: Routes.landing,
+      initialRoute: Routes.splash,
       onGenerateRoute: Routes.onGenerateRoute,
     );
   }

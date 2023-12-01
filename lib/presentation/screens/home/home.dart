@@ -2,15 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:weatherapp/core/api.dart';
-import 'package:weatherapp/data/data_source/network/network/api_service.dart';
-import 'package:weatherapp/data/reporitory_impl/weather_repoistory_impl.dart';
+import 'package:weatherapp/core/constants/api.dart';
 import 'package:weatherapp/domain/entites/weather_entity.dart';
-import 'package:weatherapp/domain/usecase/weather_usecase.dart';
 import 'package:weatherapp/injectors/injector.dart';
 import 'package:weatherapp/presentation/blocs/home/home_bloc.dart';
 import 'package:weatherapp/utils/colors.dart';

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:http/src/response.dart';
-import 'package:weatherapp/core/app_exceptions.dart';
+import 'package:weatherapp/core/error/app_exceptions.dart';
 import 'package:weatherapp/data/data_source/network/network/api_service.dart';
 import 'package:weatherapp/data/models/weater_model.dart';
 import 'package:weatherapp/domain/entites/weather_entity.dart';
