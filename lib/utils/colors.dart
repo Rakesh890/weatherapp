@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const linearWeatherColorOne = Color(0xff2E335A);
-  static const linearWeatherColorTwo = Color(0xff1C1B33);
+  static const linearWeatherColorOne = Color(0xff005C97);
+  static const linearWeatherColorTwo = Color(0xff005C97);
 
   static const linearWeatherTwoColorOne = Color(0xff5936B4);
   static const linearWeatherTwoColorTwo = Color(0xff362A84);

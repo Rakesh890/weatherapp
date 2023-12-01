@@ -8,4 +8,7 @@ abstract class WeatherRepository {
 
   Future<Either<dynamic, AppException>> fetchForcastingWeather(
       {required String url});
+
+  Future<Either<dynamic, AppException>> searchWeather(
+      {required String url});
 }

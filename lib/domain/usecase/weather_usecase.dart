@@ -20,4 +20,10 @@ class WeatherUseCase {
     final response = await weatherRepository.fetchForcastingWeather(url: url);
     return response;
   }
+
+  Future<Either<dynamic, AppException>> searchWeather(
+      {required String url}) async {
+    final response = await weatherRepository.searchWeather(url: url);
+    return response;
+  }
 }

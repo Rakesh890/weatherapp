@@ -10,6 +10,8 @@ import 'package:weatherapp/injectors/injector.dart';
 import 'package:weatherapp/presentation/blocs/home/home_bloc.dart';
 import 'package:weatherapp/utils/colors.dart';
 
+import '../../widgets/WeatherInfo.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -20,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var lat, log;
   double width = 0.0;
   double height = 0.0;
+  TextEditingController searchTextEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -31,37 +34,55 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      extendBody: true,
-      body: BlocBuilder<HomeBloc, HomeState>(
-        bloc: homeBloc,
-        builder: (context, state) {
-          if (state is GotCurrentLocation) {
-            final url =
-                "${Api.currentWeatherUrl}&lat=${state.currentPosition!.latitude}&lon=${state.currentPosition!.latitude}";
-            final forcastUrl =
-                "${Api.forcastingWeatherUrl}&lat=${state.currentPosition!.latitude}&lon=${state.currentPosition!.latitude}";
-            homeBloc
-              ..add(GetWeatherDataEvent(url: url))
-              ..add(FetchForcastingDataEvent(url: forcastUrl));
-
-            return const SizedBox();
-          } else if (state is HomeWeatherDataLoaded) {
-            return SizedBox(
-                width: width,
-                height: height,
-                child: buildWeatherBindDataView(state.weatherModelEntity,
-                    state.address ?? "", state.forcastingReponse));
-          } else if (state is HomeFetchCurrentLoction ||
-              state is FetchForcastingDataEvent) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return Center(child: Text("something went wrong ${state}"));
-          }
-        },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: const SizedBox(),
+          leadingWidth: 0,
+          title: SearchBar(
+            onSubmitted: (val){
+              final cityName = val.toString();
+              homeBloc.add(FetchWeatherAccordingToCityWise(url: Api.searchWeatherUrl+val));
+            },
+            onChanged: (val){
+              final cityName = val.toString();
+              if(cityName.isEmpty){
+                homeBloc.add(FeatchWeatherDataEvent(url:  "${Api.currentWeatherUrl}&lat=${homeBloc.currentPosition!.latitude}&lon=${homeBloc.currentPosition!.longitude}"));
+              }
+            },
+            shape:MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            )),
+            elevation: MaterialStateProperty.all(
+              0.0
+            ),
+            leading: const Icon(Icons.search),
+            hintText: "City Name",
+            controller:searchTextEditingController,
+          ),
+        ),
+        extendBodyBehindAppBar: true,
+        extendBody: true,
+        body: BlocBuilder<HomeBloc, HomeState>(
+          bloc: homeBloc,
+          builder: (context, state) {
+            if (state is GotCurrentLocation) {
+              ///Receive current location will call fetch weather data according to lat and long
+              homeBloc.add(FeatchWeatherDataEvent(url:  "${Api.currentWeatherUrl}&lat=${state.currentPosition!.latitude}&lon=${state.currentPosition!.longitude}"));
+            } else if (state is HomeWeatherDataLoaded) {
+              return WeatherInfoView(
+                weatherModelEntity:state.weatherModelEntity,
+                address:state.address
+              );
+            } else if (state is HomeFetchCurrentLoction ||
+                state is FetchForcastingDataEvent) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
@@ -69,61 +90,31 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildWeatherBindDataView(WeatherModelEntity weatherModelEntity,
       String address, dynamic forcastingReponse) {
     final List<dynamic> list = forcastingReponse['list'];
+    debugPrint(list.toString());
+    final weaterItems = weatherModelEntity.weather![0];
+    debugPrint(weaterItems.main.toString());
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
-          homeBloc.add(FetchCurrentLocationEvent());
         },
-        child: SingleChildScrollView(
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: Column(children: [
-              Text(address.toString()),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemBuilder: (context, int index) {
-                  final weaterItems = weatherModelEntity.weather![index];
-                  return Column(
-                    children: [
-                      Text.rich(TextSpan(
-                          text: "${weaterItems.main}",
-                          style: const TextStyle(
-                              fontFamily: "Roboto",
-                              color: AppColors.kPrimaryColor,
-                              fontSize: 38.0,
-                              fontWeight: FontWeight.bold),
-                          children: [
-                            TextSpan(
-                              text: "(${weaterItems.description})",
-                              style: const TextStyle(
-                                  fontFamily: "Roboto",
-                                  color: Colors.purple,
-                                  fontSize: 18.0,
-                                  fontWeight: FontWeight.normal),
-                            ),
-                          ])),
-                      buidlWeatherImage(weaterItems.icon),
-                    ],
-                  );
-                },
-                itemCount: weatherModelEntity.weather!.length,
-              ),
-              Expanded(
-                child: buildForcasting(list),
-              )
-            ]),
-          ),
-        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+
+            children: [
+          Text(address.toString(),
+          style: const TextStyle(color:Colors.white,fontWeight: FontWeight.w500,fontSize: 16.0),),
+
+          // Expanded(
+          //   child: buildForcasting(list),
+          // )
+        ]),
       ),
     );
   }
 
   buidlWeatherImage(String? icon) {
-    return Image.network(
-      "https://openweathermap.org/img/wn/$icon@4x.png",
-    );
   }
 
   buildForcasting(List list) {
@@ -163,4 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
       itemCount: list.length,
     );
   }
+
+
 }

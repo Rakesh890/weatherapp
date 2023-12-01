@@ -21,8 +21,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc({required this.weatherUseCase}) : super(HomeFetchCurrentLoction()) {
     on<FetchCurrentLocationEvent>(fetchCurrentLocation);
-    on<GetWeatherDataEvent>(fetchWeatherData);
+    on<FeatchWeatherDataEvent>(fetchWeatherData);
     on<FetchForcastingDataEvent>(fetchForcastingData);
+    on<FetchWeatherAccordingToCityWise>(featchWeatherAccordingToCity);
   }
 
   //Get current location of user
@@ -37,8 +38,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           latitude: position.latitude.toDouble(),
           longitude: position.longitude.toDouble(),
           emit: emit);
-      emit(GotCurrentLocation(
-          currentPosition: currentPosition, address: address));
+      emit(GotCurrentLocation(currentPosition: currentPosition, address: address));
     }).catchError((e) {
       emit(UnableToGetLocation(error: e));
     });
@@ -46,10 +46,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   //Get weather data according to current location
   FutureOr<void> fetchWeatherData(
-      GetWeatherDataEvent event, Emitter<HomeState> emit) async {
+      FeatchWeatherDataEvent event, Emitter<HomeState> emit) async {
     final result = await weatherUseCase.fetchWeather(url: event.url);
     result.fold((value) {
       weatherModelEntity = value;
+      emit(HomeWeatherDataLoaded(
+          weatherModelEntity: weatherModelEntity,
+          address: address));
     }, (err) {
       final AppException appException = err;
       debugPrint("data err $err");
@@ -62,12 +65,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       required double longitude,
       required Emitter<HomeState> emit}) async {
     try {
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(latitude, longitude);
       if (placemarks.isNotEmpty) {
         Placemark placemark = placemarks.first;
-        address =
-            "${placemark.street}, ${placemark.locality}, ${placemark.postalCode}, ${placemark.country}";
+        address = "${placemark.street}, ${placemark.locality}, ${placemark.postalCode}, ${placemark.country}";
       }
     } catch (e) {
       throw "Error retrieving address";
@@ -99,10 +100,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       FetchForcastingDataEvent event, Emitter<HomeState> emit) async {
     final result = await weatherUseCase.fetchForcastingWeather(url: event.url);
     result.fold((value) async {
-      emit(HomeWeatherDataLoaded(
-          forcastingReponse: value,
-          weatherModelEntity: weatherModelEntity,
-          address: address));
+      emit(GotForcastingData(
+        forcastingResponse: value,
+      ));
+    }, (err) {
+      final AppException appException = err;
+      emit(ErorrForcasrting(error: appException));
+    });
+  }
+
+  FutureOr<void> featchWeatherAccordingToCity(FetchWeatherAccordingToCityWise event, Emitter<HomeState> emit) async {
+    final result = await weatherUseCase.fetchForcastingWeather(url: event.url);
+    result.fold((value) async {
+      emit(GotSearchWeatherData(
+        response: value,
+      ));
     }, (err) {
       final AppException appException = err;
       emit(ErorrForcasrting(error: appException));

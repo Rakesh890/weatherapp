@@ -12,11 +12,11 @@ class HomeLoading extends HomeState {}
 class HomeWeatherDataLoaded extends HomeState {
   final WeatherModelEntity weatherModelEntity;
   final String? address;
-  final dynamic forcastingReponse;
+  // final dynamic forcastingReponse;
   HomeWeatherDataLoaded(
       {required this.weatherModelEntity,
       this.address,
-      required this.forcastingReponse});
+     });
 }
 
 class HomeWeatherFailure extends HomeState {
@@ -36,6 +36,11 @@ class LoadingFocastingData extends HomeState {}
 class GotForcastingData extends HomeState {
   var forcastingResponse;
   GotForcastingData({required this.forcastingResponse});
+}
+
+class GotSearchWeatherData extends HomeState {
+  var response;
+  GotSearchWeatherData({required this.response});
 }
 
 class ErorrForcasrting extends HomeState {

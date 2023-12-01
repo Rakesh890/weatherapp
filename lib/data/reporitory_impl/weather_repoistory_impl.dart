@@ -66,4 +66,30 @@ class WeatherRepositoryImplementation extends WeatherRepository {
       return right(GeneralException());
     }
   }
+
+  @override
+  Future<Either<dynamic, AppException>> searchWeather({required String url}) async {
+    try {
+      final result = await apiServices.executeGet(url: url);
+      debugPrint(url);
+      switch (result!.statusCode) {
+        case 200:
+          final data = json.decode(result.body);
+          debugPrint("Response ${data['list']}");
+          return left(data);
+        case 404:
+          return right(BadRequestException());
+        case 401:
+          return right(UnauthorisedException());
+        case 500:
+          return right(InternalServerError());
+        default:
+          return right(GeneralException());
+      }
+    } on SocketException catch (_) {
+      return right(FetchDataException());
+    } catch (err) {
+      return right(GeneralException());
+    }
+  }
 }
